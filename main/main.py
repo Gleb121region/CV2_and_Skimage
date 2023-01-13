@@ -9,7 +9,7 @@ from sklearn.metrics import mean_squared_error as mse
 from image import Image
 
 
-def give_list_frame_path(name_dir: str) -> [str]:
+def give_list_frame_path(name_dir) -> [str]:
     res = []
     d = pathlib.Path(name_dir)
     for entry in d.iterdir():
@@ -26,16 +26,17 @@ def predict(file_path: str, folder_path: str):
     height, width = img.shape[:2]
 
     first_image = Image(img, height, width)
-    print(first_image.main_pixels())
+    print(first_image.get_central_pixel())
 
     for image_name in give_list_frame_path(folder_path):
         ref = cv2.imread(image_name)
         second_image = Image(ref, height, width)
-        print(second_image.main_pixels())
 
-        if first_image.compare(second_image.main_pixels()):
-            (simular, diff) = ssim(img, ref, full=True)
-            mse_cof = mse(img, ref)
+        if first_image.compare(second_image.get_central_pixel()):
+            gray1 = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            gray2 = cv2.cvtColor(ref, cv2.COLOR_BGR2GRAY)
+            (simular, diff) = ssim(gray1, gray2, full=True)
+            mse_cof = mse(gray1, gray2)
 
             if simular > tmp_simular:
                 tmp_simular = simular
@@ -91,7 +92,7 @@ def main():
     dir_frame_path: str = '/Users/popovgleb/PycharmProjects/pythonProject4/myFrams/'
 
     video_path: str = '/Users/popovgleb/PycharmProjects/pythonProject4/video/Шрек_1080.mp4'
-    photo_path: str = '/Users/popovgleb/PycharmProjects/pythonProject4/frams/Шрек_1080/image-03843.jpg'
+    photo_path: str = '/Users/popovgleb/PycharmProjects/pythonProject4/myFrams/4.jpg'
 
     # get_every_second_of_the_video(video_path, '/Users/popovgleb/PycharmProjects/pythonProject4/frams')
 
